@@ -1,5 +1,5 @@
-import dbConnect from '../../../utils/db';
-import ToDoList from '../../../models/ToDoList';
+import dbConnect from '../../utils/db';
+import ToDoList from '../../models/ToDoList';
 
 export async function GET(req, res) {
   await dbConnect();
