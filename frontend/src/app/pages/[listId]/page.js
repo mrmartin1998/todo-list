@@ -28,7 +28,7 @@ const ToDoListPage = () => {
     if (newItem.trim() === '') return;
 
     try {
-      const response = await axios.post(`/api/todos/${listId}/items`, { name: newItem });
+      const response = await axios.post(`/api/todos/${listId}`, { name: newItem });
       setList({ ...list, items: [...list.items, response.data.data] });
       setNewItem('');
     } catch (error) {
