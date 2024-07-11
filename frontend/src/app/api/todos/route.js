@@ -1,24 +1,26 @@
+import { NextResponse } from 'next/server';
 import dbConnect from '../../utils/db';
 import ToDoList from '../../models/ToDoList';
 
-export async function GET(req, res) {
+export async function GET() {
   await dbConnect();
 
   try {
     const lists = await ToDoList.find({});
-    return res.status(200).json({ success: true, data: lists });
+    return NextResponse.json({ success: true, data: lists }, { status: 200 });
   } catch (error) {
-    return res.status(400).json({ success: false });
+    return NextResponse.json({ success: false }, { status: 400 });
   }
 }
 
-export async function POST(req, res) {
+export async function POST(req) {
   await dbConnect();
 
   try {
-    const list = await ToDoList.create(req.body);
-    return res.status(201).json({ success: true, data: list });
+    const body = await req.json();
+    const list = await ToDoList.create(body);
+    return NextResponse.json({ success: true, data: list }, { status: 201 });
   } catch (error) {
-    return res.status(400).json({ success: false });
+    return NextResponse.json({ success: false }, { status: 400 });
   }
 }
