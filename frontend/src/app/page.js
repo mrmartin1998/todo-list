@@ -1,7 +1,10 @@
+// frontend/src/app/page.js
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 
 const Home = () => {
   const [lists, setLists] = useState([]);
@@ -54,7 +57,9 @@ const Home = () => {
         <ul>
           {lists.map((list) => (
             <li key={list._id} className="flex items-center justify-between mb-2">
-              <span className="text-black">{list.name}</span>
+              <Link href={`/pages/${list._id}`} className="text-blue-500 hover:underline">
+                {list.name}
+              </Link>
               <button
                 onClick={() => handleDeleteList(list._id)}
                 className="text-red-500 hover:text-red-700"

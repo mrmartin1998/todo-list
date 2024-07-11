@@ -1,17 +1,20 @@
 import mongoose from 'mongoose';
 
+const ItemSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+});
+
 const ToDoListSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please add a name'],
-    unique: true,
-    trim: true,
-    maxlength: [40, 'Name cannot be more than 40 characters']
+    required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  items: [ItemSchema],
 });
 
-module.exports = mongoose.models.ToDoList || mongoose.model('ToDoList', ToDoListSchema);
+const ToDoList = mongoose.models.ToDoList || mongoose.model('ToDoList', ToDoListSchema);
+
+export default ToDoList;
