@@ -33,20 +33,38 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h1>To-Do Lists</h1>
-      <input
-        type="text"
-        value={newListName}
-        onChange={(e) => setNewListName(e.target.value)}
-        placeholder="New list name"
-      />
-      <button onClick={handleCreateList}>Create List</button>
-      <ul>
-        {lists.map((list) => (
-          <li key={list._id}>{list.name}</li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-black">To-Do Lists</h1>
+        <div className="flex mb-4">
+          <input
+            type="text"
+            value={newListName}
+            onChange={(e) => setNewListName(e.target.value)}
+            placeholder="New list name"
+            className="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300 text-black bg-white"
+          />
+          <button
+            onClick={handleCreateList}
+            className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600"
+          >
+            Create List
+          </button>
+        </div>
+        <ul>
+          {lists.map((list) => (
+            <li key={list._id} className="flex items-center justify-between mb-2">
+              <span className="text-black">{list.name}</span>
+              <button
+                onClick={() => handleDeleteList(list._id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
