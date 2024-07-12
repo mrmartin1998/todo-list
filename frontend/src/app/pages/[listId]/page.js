@@ -11,10 +11,10 @@ const ToDoListPage = () => {
 
   useEffect(() => {
     if (listId) {
-      // Fetch the to-do list items from the server
       const fetchList = async () => {
         try {
           const response = await axios.get(`/api/todos/${listId}`);
+          console.log('Fetched list:', response.data.data);
           setList(response.data.data);
         } catch (error) {
           console.error('Error fetching the to-do list:', error);
@@ -29,16 +29,73 @@ const ToDoListPage = () => {
 
     try {
       const response = await axios.post(`/api/todos/${listId}`, { name: newItem });
-      setList({ ...list, items: [...list.items, response.data.data] });
+      console.log('Added item:', response.data.data);
+      setList((prevList) => ({
+        ...prevList,
+        items: [...prevList.items, response.data.data]
+      }));
       setNewItem('');
     } catch (error) {
       console.error('Error adding new item:', error);
     }
   };
 
+  const handleToggleComplete = async (itemId, completed) => {
+    try {
+      const response = await axios.patch(`/api/todos/${listId}/items/${itemId}`, { completed });
+      console.log('Updated item:', response.data.data);
+      setList((prevList) => {
+        const updatedItems = prevList.items.map((item) =>
+          item._id === itemId ? { ...item, completed } : item
+        );
+        return { ...prevList, items: updatedItems };
+      });
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
+  };
+
+  const handleDeleteItem = async (itemId) => {
+    try {
+      await axios.delete(`/api/todos/${listId}/items/${itemId}`);
+      console.log('Deleted item:', itemId);
+      setList((prevList) => {
+        const updatedItems = prevList.items.filter((item) => item._id !== itemId);
+        return { ...prevList, items: updatedItems };
+      });
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
   if (!list) {
     return <div>Loading...</div>;
   }
+
+  const renderedItems = list.items.map((item) => {
+    console.log('Rendering item:', item);
+    return (
+      <li key={item._id} className="flex items-center justify-between mb-2">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={item.completed}
+            onChange={() => handleToggleComplete(item._id, !item.completed)}
+            className="mr-2"
+          />
+          <span className={item.completed ? 'line-through text-gray-500' : 'text-black'}>
+            {item.name}
+          </span>
+        </label>
+        <button
+          onClick={() => handleDeleteItem(item._id)}
+          className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600"
+        >
+          Delete
+        </button>
+      </li>
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -59,13 +116,7 @@ const ToDoListPage = () => {
             Add Item
           </button>
         </div>
-        <ul>
-          {list.items.map((item) => (
-            <li key={item._id} className="flex items-center justify-between mb-2">
-              <span className="text-black">{item.name}</span>
-            </li>
-          ))}
-        </ul>
+        <ul>{renderedItems}</ul>
       </div>
     </div>
   );
