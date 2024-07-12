@@ -63,20 +63,14 @@ export async function PATCH(req, { params }) {
 export async function DELETE(req, { params }) {
   await dbConnect();
 
-  const { listId, itemId } = params;
+  const { listId } = params;
 
   try {
-    const list = await ToDoList.findById(listId);
+    const list = await ToDoList.findByIdAndDelete(listId);
     if (!list) {
       return new Response(JSON.stringify({ success: false, error: 'List not found' }), { status: 404 });
     }
-    const item = list.items.id(itemId);
-    if (!item) {
-      return new Response(JSON.stringify({ success: false, error: 'Item not found' }), { status: 404 });
-    }
-    item.remove();
-    await list.save();
-    return new Response(JSON.stringify({ success: true, message: 'Item deleted' }), { status: 200 });
+    return new Response(JSON.stringify({ success: true, message: 'List deleted' }), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
   }
