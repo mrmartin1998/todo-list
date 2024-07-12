@@ -89,7 +89,7 @@ const ToDoListPage = () => {
         </label>
         <button
           onClick={() => handleDeleteItem(item._id)}
-          className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600"
+          className="text-red-500 hover:text-red-700"
         >
           Delete
         </button>
