@@ -28,7 +28,7 @@ const ToDoListPage = () => {
     if (newItem.trim() === '') return;
 
     try {
-      const response = await axios.post(`/api/todos/${listId}`, { name: newItem });
+      const response = await axios.post(`/api/todos/${listId}/items`, { name: newItem });
       console.log('Added item:', response.data.data);
       setList((prevList) => ({
         ...prevList,
@@ -41,6 +41,11 @@ const ToDoListPage = () => {
   };
 
   const handleToggleComplete = async (itemId, completed) => {
+    if (!itemId) {
+      console.error('Item ID is undefined!');
+      return;
+    }
+    console.log(`Toggling complete for itemId: ${itemId}, completed: ${completed}`);
     try {
       const response = await axios.patch(`/api/todos/${listId}/items/${itemId}`, { completed });
       console.log('Updated item:', response.data.data);
@@ -56,6 +61,11 @@ const ToDoListPage = () => {
   };
 
   const handleDeleteItem = async (itemId) => {
+    if (!itemId) {
+      console.error('Item ID is undefined!');
+      return;
+    }
+    console.log(`Deleting item with itemId: ${itemId}`);
     try {
       await axios.delete(`/api/todos/${listId}/items/${itemId}`);
       console.log('Deleted item:', itemId);

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -9,7 +9,6 @@ const Home = () => {
   const [newListName, setNewListName] = useState('');
 
   useEffect(() => {
-    // Fetch to-do lists from the server
     const fetchLists = async () => {
       try {
         const response = await axios.get('/api/todos');
@@ -36,7 +35,6 @@ const Home = () => {
   const handleDeleteList = async (listId) => {
     try {
       await axios.delete(`/api/todos/${listId}`);
-      console.log('Deleted list:', listId);
       setLists(lists.filter((list) => list._id !== listId));
     } catch (error) {
       console.error('Error deleting list:', error);
