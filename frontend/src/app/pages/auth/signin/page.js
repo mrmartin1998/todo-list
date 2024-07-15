@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const SignIn = () => {
+const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
@@ -13,13 +13,17 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await signIn('email', { redirect: false, email });
-      if (result.ok) {
-        router.push('/'); // Redirect to home or desired page after sign-in
+      const response = await axios.post('/api/auth/verify-user', { email });
+      if (response.data.userExists) {
+        setMessage('User exists. Redirecting...');
+        setTimeout(() => {
+          router.push('/'); // Redirect to home or desired page after sign-in
+        }, 2000);
       } else {
-        setMessage('Sign-in failed. Please check your email.');
+        setMessage('User does not exist. Please register.');
       }
     } catch (error) {
+      console.error('Error verifying user:', error);
       setMessage('An error occurred. Please try again.');
     }
   };
@@ -49,7 +53,7 @@ const SignIn = () => {
         </form>
         <p className="mt-4 text-center text-black">
           Don't have an account?{' '}
-          <Link href="/auth/register" className="text-blue-500 hover:underline">
+          <Link href="register" className="text-blue-500 hover:underline">
             Register
           </Link>
         </p>
@@ -58,4 +62,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInPage;
