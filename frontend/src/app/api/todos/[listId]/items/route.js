@@ -1,5 +1,6 @@
 import dbConnect from '../../../../utils/db';
 import ToDoList from '../../../../models/ToDoList';
+import { NextResponse } from 'next/server';
 
 export async function POST(req, { params }) {
   await dbConnect();
@@ -11,15 +12,15 @@ export async function POST(req, { params }) {
   try {
     const list = await ToDoList.findById(listId);
     if (!list) {
-      return new Response(JSON.stringify({ success: false, error: 'List not found' }), { status: 404 });
+      return NextResponse.json({ success: false, error: 'List not found' }, { status: 404 });
     }
     const newItem = { name };
     list.items.push(newItem);
     await list.save();
     const savedItem = list.items[list.items.length - 1]; // Get the last added item
-    return new Response(JSON.stringify({ success: true, data: savedItem }), { status: 201 });
+    return NextResponse.json({ success: true, data: savedItem }, { status: 201 });
   } catch (error) {
     console.error('Error adding item:', error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

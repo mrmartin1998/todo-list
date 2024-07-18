@@ -4,27 +4,29 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import jwt from 'jsonwebtoken'; // Import jwt
 
 const SignInPage = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/verify-user', { email });
-      if (response.data.userExists) {
-        setMessage('User exists. Redirecting...');
-        setTimeout(() => {
-          router.push('/'); // Redirect to home or desired page after sign-in
-        }, 2000);
-      } else {
-        setMessage('User does not exist. Please register.');
-      }
+      const response = await axios.post('/api/auth/signin', { email, password });
+      const { token } = response.data;
+      const { userId } = jwt.decode(token); // Extract userId from JWT
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId); // Store userId in local storage
+      setMessage('Sign in successful. Redirecting...');
+      setTimeout(() => {
+        router.push('/pages/todo'); // Redirect to home or desired page after sign-in
+      }, 2000);
     } catch (error) {
-      console.error('Error verifying user:', error);
-      setMessage('An error occurred. Please try again.');
+      console.error('Error signing in:', error);
+      setMessage('Invalid credentials. Please try again.');
     }
   };
 
@@ -40,6 +42,16 @@ const SignInPage = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300 text-black bg-white"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300 text-black bg-white"
               required
             />

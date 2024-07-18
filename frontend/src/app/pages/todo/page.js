@@ -7,24 +7,29 @@ import Link from 'next/link';
 const Home = () => {
   const [lists, setLists] = useState([]);
   const [newListName, setNewListName] = useState('');
+  const userId = localStorage.getItem('userId'); // Assuming you store userId in local storage upon sign-in
 
   useEffect(() => {
     const fetchLists = async () => {
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
       try {
-        const response = await axios.get('/api/todos');
+        const response = await axios.get(`/api/todos?userId=${userId}`);
         setLists(response.data.data);
       } catch (error) {
         console.error('Error fetching the to-do lists:', error);
       }
     };
     fetchLists();
-  }, []);
+  }, [userId]);
 
   const handleCreateList = async () => {
     if (newListName.trim() === '') return;
 
     try {
-      const response = await axios.post('/api/todos', { name: newListName });
+      const response = await axios.post('/api/todos', { name: newListName, userId });
       setLists([...lists, response.data.data]);
       setNewListName('');
     } catch (error) {
@@ -81,4 +86,3 @@ const Home = () => {
 };
 
 export default Home;
- 

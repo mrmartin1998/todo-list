@@ -6,15 +6,15 @@ import transporter from '@/app/utils/nodemailer';
 export async function POST(req) {
   await dbConnect();
   console.log('Database connected');
-  
+
   try {
     const body = await req.json();
     console.log('Request body:', body);
-    const { email } = body;
+    const { email, username, password } = body;
 
-    if (!email) {
-      console.log('No email provided');
-      return NextResponse.json({ message: 'Email is required' }, { status: 400 });
+    if (!email || !username || !password) {
+      console.log('Incomplete registration data');
+      return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
     }
 
     const existingUser = await User.findOne({ email });
@@ -25,7 +25,7 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Email already in use' }, { status: 400 });
     }
 
-    const newUser = new User({ email });
+    const newUser = new User({ email, username, password });
     await newUser.save();
     console.log('New user saved:', newUser);
 
