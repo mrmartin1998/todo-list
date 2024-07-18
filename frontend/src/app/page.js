@@ -1,64 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
-const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const router = useRouter();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/api/auth/verify-user', { email });
-      if (response.data.userExists) {
-        setMessage('User exists. Redirecting...');
-        setTimeout(() => {
-          router.push('pages/todo'); // Redirect to the main to-do list page after sign-in
-        }, 2000);
-      } else {
-        setMessage('User does not exist. Please register.');
-      }
-    } catch (error) {
-      setMessage('An error occurred. Please try again.');
-    }
-  };
-
+const HomePage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-black">Sign In</h1>
-        {message && <p className="mb-4 text-center text-red-500">{message}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300 text-black bg-white"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded hover:bg-blue-600"
-          >
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md text-center">
+        <h1 className="text-2xl font-bold mb-6 text-black">Welcome to the To-Do List Web App</h1>
+        <p className="mb-6 text-black">
+          This web application allows you to create and manage your to-do lists effortlessly. Sign in to access your lists, or register if you don't have an account.
+        </p>
+        <div className="mb-4">
+          <Link href="pages/auth/signin" className="w-full bg-blue-500 text-white py-3 rounded hover:bg-blue-600 block mb-4 text-center">
             Sign In
-          </button>
-        </form>
-        <p className="mt-4 text-center text-black">
-          Don't have an account?{' '}
-          <Link href="pages/auth/register" className="text-blue-500 hover:underline">
+          </Link>
+          <Link href="pages/auth/register" className="w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 block text-center">
             Register
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default SignIn;
+export default HomePage;
