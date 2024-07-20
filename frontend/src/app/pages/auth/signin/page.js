@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
-import axios from 'axios';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import jwt from 'jsonwebtoken'; // Import jwt
 
 const SignInPage = () => {
   const [email, setEmail] = useState('');
@@ -15,18 +14,23 @@ const SignInPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/signin', { email, password });
-      const { token } = response.data;
-      const { userId } = jwt.decode(token); // Extract userId from JWT
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId); // Store userId in local storage
-      setMessage('Sign in successful. Redirecting...');
-      setTimeout(() => {
-        router.push('/pages/todo'); // Redirect to home or desired page after sign-in
-      }, 2000);
+      const res = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res.error) {
+        setMessage('Invalid credentials. Please try again.');
+      } else {
+        setMessage('Sign in successful. Redirecting...');
+        setTimeout(() => {
+          router.push('/pages/todo'); // Correct redirect path
+        }, 2000);
+      }
     } catch (error) {
       console.error('Error signing in:', error);
-      setMessage('Invalid credentials. Please try again.');
+      setMessage('Error signing in. Please try again.');
     }
   };
 
@@ -65,7 +69,7 @@ const SignInPage = () => {
         </form>
         <p className="mt-4 text-center text-black">
           Don't have an account?{' '}
-          <Link href="register" className="text-blue-500 hover:underline">
+          <Link href="/auth/register" className="text-blue-500 hover:underline">
             Register
           </Link>
         </p>

@@ -1,39 +1,79 @@
-import dbConnect from '../../utils/db';
-import ToDoList from '../../models/ToDoList';
-import { NextResponse } from 'next/server';
+import dbConnect from '@/app/utils/db';
+import ToDoList from '@/app/models/ToDoList';
 
 export async function GET(req) {
   await dbConnect();
-
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get('userId');
 
   if (!userId) {
-    return NextResponse.json({ success: false, message: 'User ID is required' }, { status: 400 });
+    return new Response(JSON.stringify({ error: 'User ID is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
-    const lists = await ToDoList.find({ user: userId });
-    return NextResponse.json({ success: true, data: lists }, { status: 200 });
+    const lists = await ToDoList.find({ userId });
+    return new Response(JSON.stringify({ data: lists }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
+    return new Response(JSON.stringify({ error: 'Error fetching to-do lists', details: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 
 export async function POST(req) {
   await dbConnect();
+  const { name, userId } = await req.json();
+
+  if (!name || !userId) {
+    return new Response(JSON.stringify({ error: 'Name and User ID are required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
-    const { name, userId } = await req.json();
-
-    if (!name || !userId) {
-      return NextResponse.json({ success: false, message: 'Name and User ID are required' }, { status: 400 });
-    }
-
-    const list = new ToDoList({ name, user: userId });
-    await list.save();
-    return NextResponse.json({ success: true, data: list }, { status: 201 });
+    const newList = await ToDoList.create({ name, userId });
+    return new Response(JSON.stringify({ data: newList }), {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
+    return new Response(JSON.stringify({ error: 'Error creating to-do list', details: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+export async function DELETE(req) {
+  await dbConnect();
+  const { searchParams } = new URL(req.url);
+  const listId = searchParams.get('listId');
+
+  if (!listId) {
+    return new Response(JSON.stringify({ error: 'List ID is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  try {
+    await ToDoList.findByIdAndDelete(listId);
+    return new Response(JSON.stringify({ message: 'To-do list deleted' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Error deleting to-do list', details: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

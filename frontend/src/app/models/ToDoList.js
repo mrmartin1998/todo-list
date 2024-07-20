@@ -16,12 +16,12 @@ const ToDoListSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  user: {
+  items: [ItemSchema],
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  items: [ItemSchema],
 });
 
 const ToDoList = mongoose.models.ToDoList || mongoose.model('ToDoList', ToDoListSchema);
