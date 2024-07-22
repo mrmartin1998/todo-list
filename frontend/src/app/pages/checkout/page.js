@@ -1,11 +1,10 @@
-"use client"
+// frontend/src/app/pages/checkout/page.js
+
+'use client';
 
 import React from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-
-export default function CheckoutPage() {
+const CheckoutPage = () => {
   const handleCheckout = async () => {
     try {
       const response = await fetch('/api/checkout_sessions', {
@@ -33,9 +32,15 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div>
-      <h1>Checkout</h1>
-      <button onClick={handleCheckout}>Pay $5</button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md text-center">
+        <h1 className="text-2xl font-bold mb-6 text-black">Checkout</h1>
+        <button onClick={handleCheckout} className="w-full bg-blue-500 text-white py-3 rounded hover:bg-blue-600">
+          Pay $5
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default CheckoutPage;
