@@ -1,7 +1,23 @@
-"use client"
+"use client";
+import { useState, useEffect } from 'react';
 import { getProviders, signIn } from 'next-auth/react';
 
-export default function SignIn({ providers }) {
+export default function SignIn() {
+  const [providers, setProviders] = useState(null);
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      const res = await getProviders();
+      setProviders(res);
+    };
+
+    fetchProviders();
+  }, []);
+
+  if (!providers) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       {Object.values(providers).map((provider) => (
@@ -14,11 +30,3 @@ export default function SignIn({ providers }) {
     </div>
   );
 }
-/*
-export async function getServerSideProps() {
-  const providers = await getProviders();
-  return {
-    props: { providers },
-  };
-}
-*/
