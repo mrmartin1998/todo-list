@@ -11,8 +11,8 @@ const Navbar = () => {
         <div className="text-white font-bold text-xl">To-Do App</div>
         <ul className="flex space-x-4">
           <li><a href="/" className="text-white hover:text-gray-300">Home</a></li>
-          <li><a href="/subscriptions" className="text-white hover:text-gray-300">Subscriptions</a></li>
-          <li><a href="/profile" className="text-white hover:text-gray-300">Profile</a></li>
+          <li><a href="/pages/todo" className="text-white hover:text-gray-300">To-do</a></li>
+          <li><a href="/pages/profile" className="text-white hover:text-gray-300">Profile</a></li>
           {session ? (
             <>
               <li className="text-white">{session.user.email}</li>

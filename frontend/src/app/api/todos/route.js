@@ -1,5 +1,8 @@
+// frontend/src/app/api/todos/route.js
+
 import dbConnect from '@/app/utils/db';
 import ToDoList from '@/app/models/ToDoList';
+import User from '@/app/models/User';
 
 export async function GET(req) {
   await dbConnect();
@@ -39,6 +42,16 @@ export async function POST(req) {
   }
 
   try {
+    const user = await User.findById(userId);
+    const lists = await ToDoList.find({ userId });
+
+    if (user.subscriptionStatus === 'free' && lists.length >= 3) {
+      return new Response(JSON.stringify({ error: 'Free users can only create 3 lists' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const newList = await ToDoList.create({ name, userId });
     return new Response(JSON.stringify({ data: newList }), {
       status: 201,

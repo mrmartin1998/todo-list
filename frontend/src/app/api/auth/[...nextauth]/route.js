@@ -17,7 +17,7 @@ export const authOptions = {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
-          return { id: user._id, email: user.email };
+          return { id: user._id, email: user.email, subscriptionStatus: user.subscriptionStatus || 'free' };
         }
         return null;
       },
@@ -30,12 +30,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.subscriptionStatus = user.subscriptionStatus;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
+        session.user.subscriptionStatus = token.subscriptionStatus;
       }
       return session;
     },

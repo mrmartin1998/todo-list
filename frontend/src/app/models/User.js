@@ -1,3 +1,5 @@
+// frontend/src/app/models/User.js
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -21,6 +23,11 @@ const UserSchema = new mongoose.Schema({
     default: true,
   },
   lists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ToDoList' }],
+  subscriptionStatus: {
+    type: String,
+    enum: ['free', 'premium'],
+    default: 'free',
+  },
 });
 
 UserSchema.pre('save', async function (next) {
