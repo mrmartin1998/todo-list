@@ -14,10 +14,11 @@ export default function SignIn({ providers }) {
     </div>
   );
 }
-
+/*
 export async function getServerSideProps() {
   const providers = await getProviders();
   return {
     props: { providers },
   };
 }
+*/
