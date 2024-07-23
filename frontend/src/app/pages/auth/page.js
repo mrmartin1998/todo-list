@@ -30,3 +30,13 @@ export default function SignIn() {
     </div>
   );
 }
+
+/*
+// Ensure this remains commented out or removed
+export async function getServerSideProps() {
+  const providers = await getProviders();
+  return {
+    props: { providers },
+  };
+}
+*/
